@@ -2,7 +2,7 @@
 Plugin Name: FRB's SOCS Integration
 Plugin URI: http://github-url-here.com
 Description: We've kinda copied Wellington here, but oh well!
-Version: 1.1.0
+Version: 1.1.1
 Author: Fred Bradley
 Author URI: http://fred.im/
 License: GPL2
