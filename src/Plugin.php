@@ -17,7 +17,6 @@ class Plugin {
 		$this->settings = new Settings();
 		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
 		add_shortcode( "socs-results", array($this, "displayResults"));
-		$this->plugin_update_check('cranleigh-socs');
 		add_action( 'wp_footer', array($this, 'wp_footer'));
 		$this->api = new API();
 }
@@ -59,16 +58,7 @@ jQuery(function($){
 		return $output;
 	}
 
-	/**
-	 * @param string $plugin_name
-	 */
-	public function plugin_update_check(string $plugin_name) {
-		$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-			'https://github.com/cranleighschool/'.$plugin_name.'/',
-			dirname(dirname(__FILE__)).'/'.$plugin_name.'.php',
-			$plugin_name
-		);
-	}
+
 
 	public function getTeams() {
 		return new SOCSTeams($this->settings->schoolID, $this->settings->apiKey);

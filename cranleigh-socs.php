@@ -1,8 +1,8 @@
 <?php /*
 Plugin Name: FRB's SOCS Integration
-Plugin URI: http://github-url-here.com
+Plugin URI: https://github.com/cranleighschool/cranleigh-socs
 Description: We've kinda copied Wellington here, but oh well!
-Version: 1.1.1
+Version: 1.2.0
 Author: Fred Bradley
 Author URI: http://fred.im/
 License: GPL2
@@ -14,5 +14,7 @@ require_once 'vendor/autoload.php';
 
 $settings_api = new SettingsApi();
 
-new Plugin('1.1.0');
+$updates = new PluginUpdateCheck("cranleigh-socs");
+
+new Plugin('1.2.0');
 
