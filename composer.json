@@ -1,0 +1,25 @@
+{
+  "name": "fredbradley/cranleigh-socs-plugin",
+  "description": "A Wordpress plugin that allows us to pull information from SOCS API.",
+  "config": {
+	  "preferred-install": {
+		  "*": "dist"
+	  }
+  },
+  "require": {
+    "yahnis-elsts/plugin-update-checker": "^4.1",
+    "tareq1988/wordpress-settings-api-class": "dev-master"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Fred Bradley",
+      "email": "hello@fredbradley.co.uk"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FredBradley\\SOCS\\": "src"
+    }
+  }
+}
