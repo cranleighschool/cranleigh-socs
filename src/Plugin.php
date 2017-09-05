@@ -12,8 +12,8 @@ class Plugin {
 	 *
 	 * @param string $version
 	 */
-	public function __construct(string $version) {
-		$this->version = $version;
+	public function __construct() {
+		$this->version = get_plugin_data(dirname(__FILE__))['Version'];
 		$this->settings = new Settings();
 		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
 		add_shortcode( "socs-results", array($this, "displayResults"));
@@ -120,7 +120,9 @@ jQuery(function($){
 			"hockey" => 15,
 			"golf" => 13,
 			"football" => 26,
-			"hockey indoor" => 15
+			"hockey indoor" => 15,
+			"hockey sevens" => 15
+
 		];
 		if (array_key_exists($sport_lr, $icons))
 			return '<img src="https://www.schoolssports.com/images/sporticons/'.$icons[$sport_lr].'.gif" />';
