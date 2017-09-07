@@ -8,6 +8,9 @@ namespace FredBradley\SOCS;
  */
 class SOCSResults {
 
+	private $school_id;
+	private $api_key;
+	public $weeks_back = 1;
 	/**
 	 * @var array
 	 */
@@ -16,7 +19,7 @@ class SOCSResults {
 	/**
 	 * @var string
 	 */
-	private $requestUrl = "https://www.schoolssports.com/school/xml/results.ashx?";
+	private $requestUrl = "https://www.schoolssports.com/school/xml/mso-sport.ashx?";
 
 	/**
 	 * SOCSResults constructor.
@@ -25,15 +28,25 @@ class SOCSResults {
 	 * @param string $apiKey
 	 */
 	public function __construct(int $schoolID, string $apiKey) {
+		$this->school_id = $schoolID;
+		$this->api_key = $apiKey;
 		$query = http_build_query([
 			"ID" => $schoolID,
 			"key" => $apiKey,
+			"data" => "fixtures",
+			"enddate" => date("d M Y"),
+			"startdate" => date("d M Y", strtotime("-".$this->weeks_back." week"))
 		]);
+
 		$this->uri = $this->requestUrl.$query;
 		$this->result = simplexml_load_file($this->requestUrl.$query);
-		$this->json = ["thing" => "thingtwo"];
+
 	}
 
+	private function getTeam($team_id) {
+		$teams = new SOCSTeams($this->school_id, $this->api_key);
+		return $teams->getTeam($team_id);
+	}
 	/**
 	 * @param string $date
 	 * @param bool   $asTimestamp
@@ -69,28 +82,23 @@ class SOCSResults {
 
 		$output = [];
 
-		$array = (array) $this->result;
-		if (isset($array['fixture'])) {
-			$fixtures = array_reverse( $array[ 'fixture' ] );
-		} else {
-			$fixtures = $array;
-		}
-		$weeks_to_count_back = 30;
+		foreach ($this->result as $fixture):
 
-		$count = 0;
-		foreach ($fixtures as $fixture):
+			if (isset($fixture->result)):
+				$result = "<p class=\"fixture\"><span class=\"label label-default\">".$fixture->sport."</span> ".$this->getTeam($fixture->teamid)->teamname." vs ".$fixture->opposition.": ".$fixture->result;
+				if (isset($fixture->pointsfor) && isset($fixture->pointsagainst)):
+					$result .= " (".$fixture->pointsfor." - ".$fixture->pointsagainst.")";
+				endif;
+				$result .= "</p>";
+			endif;
 
-			if ($this->anglofyDate((string) $fixture->date, true) < (time() - ($weeks_to_count_back * WEEK_IN_SECONDS)))
-				break;
-			$result = "<p class=\"fixture\"><span class=\"label label-default\">".$fixture->sport."</span> ".$fixture->team." vs ".$fixture->opposition.": ".$fixture->result."</p>";
 			array_push($output, $result);
 
-			$count++;
 
 		endforeach;
 
-		if ($count == 0) {
-			$result = "<p class=\"fixture\">There have been no results reported in the last ".$weeks_to_count_back." weeks...</p>";
+		if (count($this->result)==0) {
+			$result = "<p class=\"fixture\">There have been no results reported in the last ".$this->weeks_back." weeks...</p>";
 			array_push($output, $result);
 		}
 
