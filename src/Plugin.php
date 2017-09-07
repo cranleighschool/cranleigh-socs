@@ -18,6 +18,9 @@ class Plugin {
 		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
 		add_shortcode( "socs-results", array($this, "displayResults"));
 		add_action( 'wp_footer', array($this, 'wp_footer'));
+		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css");
+		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css");
+
 		$this->api = new API();
 }
 
@@ -34,14 +37,29 @@ jQuery(function($){
   $.simpleTicker($("#ticker-roll"),{'effectType':'roll'});
   $.simpleTicker($("#ticker-slide"),{'effectType':'slide'});
   $.simpleTicker($("#ticker-one-item"),{'effectType':'fade',});
+  $('.socs-table').DataTable(
+	  {"columns": [
+		{ "orderable": false },
+		{ "orderable": false },
+		{ "orderable": true },
+		{ "orderable": true },
+		{ "orderable": true },
+		{ "orderable": false }
+	]}
+	);
+
 });
 </script>
 <?php	}
+
 
 	/**
 	 * @return string
 	 */
 	public function displayResults() {
+		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js' );
+		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.bootstrap.min.js' );
+
 		$results = new SOCSResults($this->settings->schoolID, $this->settings->apiKey);
 		$output = "<div class=\"ticker-container\">";
 		$output .= $results->title();
@@ -151,6 +169,7 @@ jQuery(function($){
 	 */
 	public function displayFixtures() {
 		$fixtures = $this->getFixtures();
+
 		ob_start();
 		?>
 		<div class="table-responsive">
@@ -172,16 +191,18 @@ jQuery(function($){
 
 				<tr class="<?php echo strtolower((string) $fixture->result); ?>">
 					<td><span data-toggle="tooltip" title="<?php echo $fixture->sport; ?>"><?php echo $this->mapSportIcon($fixture->sport); ?></span></td>
-					<td><?php echo $this->anglofyDate($fixture->date); ?> (<?php echo $fixture->time;?>)</td>
+					<td><?php echo $this->anglofyDate($fixture->date); ?><br /><small>(<?php echo $fixture->time;?>)</small></td>
 					<td><a href="<?php echo $fixture->url; ?>" target="_blank"><?php echo $teams->getTeam($fixture->teamid)->teamname; ?></a></td>
 					<td>
 						<?php if ((string) $fixture->latlng): ?>
 						<a href="https://www.google.co.uk/maps/place/<?php echo $fixture->latlng; ?>" data-src="https://www.google.co.uk/maps/place/<?php echo $fixture->latlng; ?>" target="_blank">
 						<?php endif; ?>
-							<?php echo $fixture->location." ";
-							if ($fixture->location == "Home"  && (string) $fixture->locationdetails && $fixture->locationdetails != "Main School"):
-								echo "(".$fixture->locationdetails.")";
+							<?php echo $fixture->location;
+
+							if ((string) $fixture->locationdetails && $fixture->locationdetails != "Main School"):
+								echo "<br /><small>(".$fixture->locationdetails.")</small>";
 							endif;
+
 						if ((string) $fixture->latlng): ?>
 						</a>
 						<?php endif; ?>
