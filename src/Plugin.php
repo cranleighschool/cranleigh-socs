@@ -37,16 +37,20 @@ jQuery(function($){
   $.simpleTicker($("#ticker-roll"),{'effectType':'roll'});
   $.simpleTicker($("#ticker-slide"),{'effectType':'slide'});
   $.simpleTicker($("#ticker-one-item"),{'effectType':'fade',});
-  $('.socs-table').DataTable(
-	  {"columns": [
-		{ "orderable": false },
-		{ "orderable": false },
-		{ "orderable": true },
-		{ "orderable": true },
-		{ "orderable": true },
-		{ "orderable": false }
-	]}
-	);
+  if ($('.socs-table').length > 0) {
+	  $('.socs-table').DataTable(
+		  {
+			  "columns": [
+				  {"orderable": false},
+				  {"orderable": false},
+				  {"orderable": true},
+				  {"orderable": true},
+				  {"orderable": true},
+				  {"orderable": false}
+			  ]
+		  }
+	  );
+  }
 
 });
 </script>
