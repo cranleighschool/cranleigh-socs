@@ -23,7 +23,7 @@ class SportFixturesWidget extends \WP_Widget {
 	 */
 	public function __construct() {
 		$this->id_name = $this->get_class_name();
-		$this->default_name = "Sports Fixtures Widget";
+		$this->default_name = "Cranleigh Sports Fixtures Widget";
 		$this->description = "Show the upcoming fixtures limited to a chosen sport. Limited to 5 or as many on the same day. (So that it doesn't look like there's only 5 on one day where there are actually 10).";
 
 		$widget_ops = array(
