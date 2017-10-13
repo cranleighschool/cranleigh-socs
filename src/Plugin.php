@@ -15,14 +15,22 @@ class Plugin {
 	public function __construct() {
 		$this->version = get_plugin_data(dirname(__FILE__))['Version'];
 		$this->settings = new Settings();
+		$this->api = new API();
+		$this->api->init();
+
 		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
 		add_shortcode( "socs-results", array($this, "displayResults"));
 		add_action( 'wp_footer', array($this, 'wp_footer'));
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+		add_action( 'widgets_init', array($this, 'register_widgets'));
+	}
+	public function enqueue_styles() {
 		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css");
 		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css");
-
-		$this->api = new API();
-}
+	}
+	public function register_widgets() {
+		register_widget(Widgets\SportFixturesWidget::class);
+	}
 
 	/**
 	 *
@@ -41,12 +49,13 @@ jQuery(function($){
 	  $('.socs-table').DataTable(
 		  {
 			  "columns": [
-				  {"orderable": false},
-				  {"orderable": false},
-				  {"orderable": true},
-				  {"orderable": true},
-				  {"orderable": true},
-				  {"orderable": false}
+				  { "orderable": false },
+				  { "orderable": false },
+				  { "orderable": true },
+				  { "orderable": true },
+				  { "orderable": true },
+				  { "orderable": false },
+				  { "orderable": false }
 			  ]
 		  }
 	  );
@@ -63,6 +72,7 @@ jQuery(function($){
 	public function displayResults() {
 		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js' );
 		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.bootstrap.min.js' );
+		wp_enqueue_script('socs-js', plugins_url('socs.js', __FILE__), 'jquery');
 
 		$results = new SOCSResults($this->settings->schoolID, $this->settings->apiKey);
 		$output = "<div class=\"ticker-container\">";
@@ -168,6 +178,20 @@ jQuery(function($){
 
 	}
 
+	private function showTeamsheet($eventid) {
+		return '<a href="javascript:void(0)" class="teamsheet-link" data-foo="'.$eventid.'">Link</a>';
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+
+		$json = file_get_contents("https://socs.cranleigh.org/fixture/".$eventid, false, stream_context_create($arrContextOptions));
+		$fixture = json_decode($json);
+
+		return $fixture->sport;
+	}
 	/**
 	 * @return string
 	 */
@@ -176,6 +200,28 @@ jQuery(function($){
 
 		ob_start();
 		?>
+
+
+		<!-- Modal -->
+		<div class="modal fade" id="teamsheetmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Teamsheet</h4>
+
+					</div>
+					<div class="modal-body"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 		<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed socs-table">
 			<thead>
@@ -185,6 +231,7 @@ jQuery(function($){
 				<th>Location</th>
 				<th>Opposition</th>
 				<th>Match Type</th>
+				<th style="display: none">Teamsheet</th>
 			</thead>
 			<tbody>
 				<?php
@@ -213,6 +260,7 @@ jQuery(function($){
 					</td>
 					<td><?php echo $fixture->opposition; ?></td>
 					<td><?php echo $fixture->matchtype; ?></td>
+					<td style="display: none;"><?php echo $this->showTeamsheet($fixture->eventid); ?></td>
 				</tr>
 				<?php endforeach; ?>
 
