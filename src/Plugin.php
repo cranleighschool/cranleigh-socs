@@ -102,7 +102,7 @@ jQuery(function($){
 	 * @return mixed
 	 */
 	public function get_setting($setting) {
-		return (new Settings())->$setting;
+		return $this->settings->$setting;
 	}
 
 	/**
