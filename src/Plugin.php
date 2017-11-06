@@ -24,9 +24,18 @@ class Plugin {
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
 		add_action( 'widgets_init', array($this, 'register_widgets'));
 	}
+	public function checkPage() {
+		if (get_the_ID() == get_page_by_path('information/sports-desk')->ID) {
+			return true;
+		}
+
+		return false;
+	}
 	public function enqueue_styles() {
-		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css");
-		wp_enqueue_style('datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css");
+		if ($this->checkPage()===true) {
+			wp_enqueue_style( 'datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" );
+			wp_enqueue_style( 'datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css" );
+		}
 	}
 	public function register_widgets() {
 		register_widget(Widgets\SportFixturesWidget::class);
@@ -36,6 +45,9 @@ class Plugin {
 	 *
 	 */
 	public function wp_footer() {
+		if ($this->checkPage() === false) {
+			return false;
+		}
 		?>
 
 <script src="<?php echo plugins_url( 'jquery.simpleTicker/jquery.simpleTicker.js' , __FILE__ )?>"></script>
@@ -70,8 +82,6 @@ jQuery(function($){
 	 * @return string
 	 */
 	public function displayResults() {
-		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js' );
-		wp_enqueue_script( 'datatables-js', '//cdn.datatables.net/1.10.16/js/jquery.dataTables.bootstrap.min.js' );
 		wp_enqueue_script('socs-js', plugins_url('socs.js', __FILE__), 'jquery');
 
 		$results = new SOCSResults($this->settings->schoolID, $this->settings->apiKey);
