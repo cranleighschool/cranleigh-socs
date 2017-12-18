@@ -9,8 +9,7 @@
   "require": {
     "yahnis-elsts/plugin-update-checker": "^4.1",
     "tareq1988/wordpress-settings-api-class": "dev-master",
-    "yahnis-elsts/admin-notices": "^1.0",
-    "guzzlehttp/guzzle": "^6.3"
+    "yahnis-elsts/admin-notices": "^1.0"
   },
   "license": "MIT",
   "authors": [
