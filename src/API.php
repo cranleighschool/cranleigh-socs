@@ -1,5 +1,7 @@
 <?php
 namespace FredBradley\SOCS;
+use YeEasyAdminNotices\V1\AdminNotice;
+
 error_reporting(E_ALL);
 
 /**
@@ -89,6 +91,11 @@ class API {
 		                   ->setData('teams')
 		                   ->setKey((new Settings())->apiKey)
 		                   ->get();
+
+		if ($output === false) {
+			AdminNotice::create()->error("Teams could not be found from the API")->show();
+			return false;
+		}
 
 		$teams = $output->result;
 		$listSports = [];

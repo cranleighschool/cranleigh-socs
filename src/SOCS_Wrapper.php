@@ -1,6 +1,12 @@
 <?php
 namespace FredBradley\SOCS;
 
+use GuzzleHttp\Client;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
+use YeEasyAdminNotices\V1\AdminNotice;
+
 class SOCS_Wrapper {
 	private static $instance = null;
 	public $startDate;
@@ -43,7 +49,19 @@ class SOCS_Wrapper {
 			$this->buildQuery("enddate", $this->endDate);
 		}
 
-		$this->result = simplexml_load_file($this->requestUrl.http_build_query($this->apiQuery));
+	    try {
+			$use_errors = libxml_use_internal_errors(true);
+			$this->result = @simplexml_load_file($this->requestUrl.http_build_query($this->apiQuery));
+			if (false === $this->result) {
+				throw new \Exception("Cannot load xml source: <code>".$this->requestUrl.http_build_query($this->apiQuery)."</code>");
+			}
+			libxml_clear_errors();
+			libxml_use_internal_errors($use_errors);
+		} catch (\Exception $e) {
+			AdminNotice::create()->error($e->getMessage())->show();
+			return false;
+		}
+
 
 		$this->numRows = count($this->result);
 
