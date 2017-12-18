@@ -50,6 +50,7 @@ class SOCS_Wrapper {
 		}
 
 	    try {
+			// TODO: Add simplexml output to transient so we don't check an external source everytime!
 			$use_errors = libxml_use_internal_errors(true);
 			$this->result = @simplexml_load_file($this->requestUrl.http_build_query($this->apiQuery));
 			if (false === $this->result) {
