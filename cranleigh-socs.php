@@ -3,7 +3,7 @@
 Plugin Name: SOCS API Integration
 Plugin URI: https://github.com/cranleighschool/cranleigh-socs
 Description: We've kinda copied Wellington here, but oh well!
-Version: 1.3.5
+Version: 1.3.6
 Author: Fred Bradley
 Author URI: http://fred.im/
 License: GPL2

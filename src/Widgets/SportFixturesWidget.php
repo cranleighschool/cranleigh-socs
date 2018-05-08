@@ -110,23 +110,33 @@ class SportFixturesWidget extends \WP_Widget {
 		echo apply_filters( 'widget_title', wp_sprintf("Upcoming %s Fixtures", $sport) );
 		echo $args['after_title'];
 
-		$response = wp_remote_get(get_site_url()."/wp-json/cranleigh/socs/fixtures?limit=10&sport=".$sport);
+		$response = wp_remote_get( get_site_url() . "/wp-jsons/cranleigh/socs/fixtures?limit=10&sport=" . $sport );
+		if ($response['response']['code'] !== 200) {
 
-		$obj = json_decode(wp_remote_retrieve_body($response));
-		echo '<div class="table-responsive">';
-		echo '<table class="table table-striped table-condensed table-hover">';
-		//echo "<thead><th>Time/Date</th><th>Place</th></thead>";
-		$this->getSportID($obj[0]->url);
+			$error_message = "There was a problem getting the fixtures list. Please try again later.";
+			error_log($error_message);
+			echo '<div class="alert alert-warning">'.$error_message.'</div>';
 
-		foreach ($obj as $fixture) {
-			echo $this->getCalendarFixtureRow($fixture);
+		} else {
+
+			$obj = json_decode( wp_remote_retrieve_body( $response ) );
+			echo '<div class="table-responsive">';
+			echo '<table class="table table-striped table-condensed table-hover">';
+			//echo "<thead><th>Time/Date</th><th>Place</th></thead>";
+			$this->getSportID( $obj[ 0 ]->url );
+
+			foreach ( $obj as $fixture ) {
+				echo $this->getCalendarFixtureRow( $fixture );
+			}
+			echo '</table>';
+			echo '</div>';
+
+			echo '<div style="padding:5px;">';
+			echo do_shortcode( '[signpost block="true" url="' . $this->sportURL . '" text="All ' . $sport . ' Fixtures"]' );
+			echo '</div>';
+
 		}
-		echo '</table>';
-		echo '</div>';
-		echo '<div style="padding:5px;">';
-		echo do_shortcode('[signpost block="true" url="'.$this->sportURL.'" text="All '.$sport.' Fixtures"]'); //'<div class="signpost signpost-block"><a href="#">All '.$sport.' Fixtures</a></div>';
-		echo '</div>';
-		//echo "<pre>".var_dump($obj)."</pre>";
+
 		echo $args['after_widget'];
 	}
 	private function getSportID($url) {
