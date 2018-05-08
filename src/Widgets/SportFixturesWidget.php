@@ -110,7 +110,7 @@ class SportFixturesWidget extends \WP_Widget {
 		echo apply_filters( 'widget_title', wp_sprintf("Upcoming %s Fixtures", $sport) );
 		echo $args['after_title'];
 
-		$response = wp_remote_get( get_site_url() . "/wp-jsons/cranleigh/socs/fixtures?limit=10&sport=" . $sport );
+		$response = wp_remote_get( get_site_url() . "/wp-json/cranleigh/socs/fixtures?limit=10&sport=" . $sport );
 		if ($response['response']['code'] !== 200) {
 
 			$error_message = "There was a problem getting the fixtures list. Please try again later.";
