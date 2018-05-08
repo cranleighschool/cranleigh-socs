@@ -122,10 +122,12 @@ class SportFixturesWidget extends \WP_Widget {
 			$obj = json_decode( wp_remote_retrieve_body( $response ) );
 			echo '<div class="table-responsive">';
 			echo '<table class="table table-striped table-condensed table-hover">';
-			//echo "<thead><th>Time/Date</th><th>Place</th></thead>";
-			$this->getSportID( $obj[ 0 ]->url );
 
 			foreach ( $obj as $fixture ) {
+				if (isset($fixture->url) && $this->sportID === null) {
+					$this->getSportID($fixture->url);
+				}
+
 				echo $this->getCalendarFixtureRow( $fixture );
 			}
 			echo '</table>';
