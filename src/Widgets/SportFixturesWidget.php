@@ -124,7 +124,7 @@ class SportFixturesWidget extends \WP_Widget {
 			echo '<table class="table table-striped table-condensed table-hover">';
 
 			foreach ( $obj as $fixture ) {
-				if (isset($fixture->url) && $this->sportID === null) {
+				if (isset($fixture->url) && !isset($this->sportID)) {
 					$this->getSportID($fixture->url);
 				}
 
