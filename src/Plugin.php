@@ -245,9 +245,13 @@ jQuery(function($){
 			</thead>
 			<tbody>
 				<?php
+
+
 					if ($fixtures->result):
 					$teams = $this->getTeams();
 					foreach($fixtures->result as $fixture):
+						if (!socs_is_normal_sport_fixture($fixture))
+							continue;
 				?>
 
 				<tr class="<?php echo strtolower((string) $fixture->result); ?>">

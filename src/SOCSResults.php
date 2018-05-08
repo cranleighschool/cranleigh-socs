@@ -28,6 +28,7 @@ class SOCSResults {
 	 * @param string $apiKey
 	 */
 	public function __construct(int $schoolID, string $apiKey) {
+
 		$this->school_id = $schoolID;
 		$this->api_key = $apiKey;
 		$query = http_build_query([
@@ -84,7 +85,7 @@ class SOCSResults {
 
 		foreach ($this->result as $fixture):
 
-			if (isset($fixture->result)):
+			if (isset($fixture->result) && socs_is_normal_sport_fixture($fixture)):
 				$result = "<p class=\"fixture\"><span class=\"label label-default\">".$fixture->sport."</span> ".$this->getTeam($fixture->teamid)->teamname." vs ".$fixture->opposition.": ".$fixture->result;
 				if (isset($fixture->pointsfor) && isset($fixture->pointsagainst)):
 					$result .= " (".$fixture->pointsfor." - ".$fixture->pointsagainst.")";

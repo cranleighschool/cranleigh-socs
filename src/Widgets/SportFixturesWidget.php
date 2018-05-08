@@ -129,8 +129,8 @@ class SportFixturesWidget extends \WP_Widget {
 		echo $args['after_widget'];
 	}
 	private function getSportID($url) {
-		$parts = explode("SID=", $url);
-		$this->sportID = $parts[1];
+		$parts = explode("SID=", $url); // Sometimes the "SID=" is not found!
+		$this->sportID = $parts[1]; // when SID is not found in the URL then this breaks!
 		$this->sportURL = "http://sportsdesk.cranleigh.org/Fixtures_Teams.asp?SID=".$this->sportID;
 	}
 	private function getMonthNameFromDate(string $date) {
