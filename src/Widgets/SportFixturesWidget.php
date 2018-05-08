@@ -111,6 +111,7 @@ class SportFixturesWidget extends \WP_Widget {
 		echo $args['after_title'];
 
 		$response = wp_remote_get(get_site_url()."/wp-json/cranleigh/socs/fixtures?limit=10&sport=".$sport);
+
 		$obj = json_decode(wp_remote_retrieve_body($response));
 		echo '<div class="table-responsive">';
 		echo '<table class="table table-striped table-condensed table-hover">';
