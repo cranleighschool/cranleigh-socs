@@ -2,6 +2,7 @@
 namespace FredBradley\SOCS;
 
 use Puc_v4_Factory;
+use YeEasyAdminNotices\V1\AdminNotice;
 
 class Plugin {
 	private $version;
@@ -15,9 +16,13 @@ class Plugin {
 	public function __construct() {
 		$this->version = get_plugin_data(dirname(__FILE__))['Version'];
 		$this->settings = new Settings();
+
 		$this->api = new API();
 		$this->api->init();
 
+		if ($this->settings->schoolID===1) {
+			AdminNotice::create()->error("<strong>SOCS API PLUGIN:</strong> Looks like you haven't set your settings yet. Please <a href='options-general.php?page=cranleigh-socs-settings'>do that now...</a>")->show();
+		}
 		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
 		add_shortcode( "socs-results", array($this, "displayResults"));
 		add_action( 'wp_footer', array($this, 'wp_footer'));
