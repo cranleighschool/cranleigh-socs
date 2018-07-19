@@ -44,6 +44,7 @@ class Plugin {
 	}
 	public function register_widgets() {
 		register_widget(Widgets\SportFixturesWidget::class);
+		register_widget(Widgets\UpcomingCalendarEventsWidget::class);
 	}
 
 	/**

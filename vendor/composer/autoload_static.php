@@ -7,11 +7,17 @@ namespace Composer\Autoload;
 class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
 {
     public static $files = array (
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '1f37a5ef85747fbad7d9cdafefb4209b' => __DIR__ . '/..' . '/yahnis-elsts/admin-notices/AdminNotice.php',
         '89ff252b349d4d088742a09c25f5dd74' => __DIR__ . '/..' . '/yahnis-elsts/plugin-update-checker/plugin-update-checker.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\Translation\\' => 30,
+        ),
         'F' => 
         array (
             'FredBradley\\SOCS\\' => 17,
@@ -19,9 +25,31 @@ class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
         'FredBradley\\SOCS\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+    );
+
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
+    );
+
+    public static $prefixesPsr0 = array (
+        'I' => 
+        array (
+            'ICal' => 
+            array (
+                0 => __DIR__ . '/..' . '/johngrogg/ics-parser/src',
+            ),
         ),
     );
 
@@ -34,6 +62,8 @@ class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$classMap;
 
         }, null, ClassLoader::class);
