@@ -8,8 +8,8 @@
 
 namespace FredBradley\SOCS\Widgets;
 
+use FredBradley\SOCSICSParser\CalendarEvents;
 use ICal\Event;
-use ICal\ICal;
 
 class UpcomingCalendarEventsWidget extends \WP_Widget {
 
@@ -40,14 +40,11 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 
 	public function widget( $args, $instance ) {
 
-		$widgetVar = shortcode_atts(
-			[
-				"minNumEvents" => 5
-			],
-			$instance
-		);
-
-		$this->setMinNumEventsShown( $widgetVar[ 'minNumEvents' ] );
+		$calendar = new CalendarEvents($instance['socs_uri'], [
+			'cacheName' => $args['widget_id'],
+			'minNumEvents' => 10
+		]);
+		$this->setMinNumEventsShown( $calendar->minNumEvents );
 
 		echo $args[ 'before_widget' ];
 
@@ -56,23 +53,21 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 					$instance[ 'title' ] ) . $args[ 'after_title' ];
 		}
 
-		$iCal = $this->calendar( $instance[ 'socs_uri' ] );
+		if (is_wp_error($calendar)) {
 
-		if (is_wp_error($iCal)) {
-
-			echo '<div class="alert alert-danger"><p><strong>Error: </strong>'.$iCal->get_error_message().'</p></div>';
+			echo '<div class="alert alert-danger"><p><strong>Error: </strong>'.$calendar->get_error_message().'</p></div>';
 
 		} else {
-			$events = $iCal->eventsFromRange( date( "Y-m-d 00:00:00" ), date( "Y-m-d 00:00:00", strtotime( "+16 weeks" ) ) );
 			echo '<div class="table-responsive">';
 			echo '<table class="table table-striped table-condensed table-hover">';
 			$i = 0;
-			foreach ( $events as $key => $event ):
 
-				$i ++;
+			foreach ( $calendar->events as $key => $event ):
+
+				$i++;
 				if ( $i > $this->min_num_events_shown ) {
 					$lastRecord = ( $key - 1 );
-					$lastEvent  = $events[ $lastRecord ];
+					$lastEvent  = $calendar->events[ $lastRecord ];
 					if ( $this->iCalDateHelper( $event->dtstart )->format( "Y-m-d" ) !== $this->iCalDateHelper( $lastEvent->dtstart )->format( "Y-m-d" ) ) {
 						break;
 					}
@@ -80,8 +75,7 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 
 				$event_start_date = $this->iCalDateHelper( $event->dtstart );
 				$event_end_date   = $this->iCalDateHelper( $event->dtend );
-
-				$time_label = $this->timeLabel( $event, $event_start_date, $event_end_date );
+				
 
 				$event_meta = $this->setEventMeta( $event );
 				?>
@@ -94,7 +88,7 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 					<td class="cal-event-detail">
 						<a target="socs_calendar" href="<?php echo $this->getSocsHttpUri( $instance[ 'socs_uri' ] ) ?>"><?php echo $event->summary; ?></a>
 						<br />
-						<span class="cal-event-time"><?php echo $time_label; ?></span>
+						<span class="cal-event-time"><?php echo $event->timeLabel; ?></span>
 						<span class="cal-meta"><?php echo $event_meta; ?></span>
 					</td>
 				</tr>
@@ -116,26 +110,6 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 		$this->min_num_events_shown = $number;
 	}
 
-	public function calendar( $webcal ) {
-
-		try {
-			$iCal = new ICal( $webcal, [
-				'defaultSpan'                 => 1,
-				'defaultTimeZone'             => 'UTC',
-				'defaultWeekStart'            => 'MO',
-				'defaultCharacterReplacement' => false,
-				'skipRecurrence'              => false,
-				'useTimeZoneWithRRules'       => false
-			] );
-
-			return $iCal;
-
-		} catch ( \Exception $e ) {
-
-			return new \WP_Error("400", "Could not retrieve calendar.");
-		}
-	}
-
 	private function iCalDateHelper( string $iCalDate ) {
 
 		$iCalDate = str_replace( "T", "", $iCalDate );
@@ -144,43 +118,6 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 		return new \DateTime( $iCalDate );
 	}
 
-	private function timeLabel( Event $event, $event_start_date, $event_end_date ) {
-
-		if ( $this->isAllDayEvent( $event ) ) {
-			$time_label = "All Day";
-			if ( ( $event_start_date->format( "Y-m-d" ) !== $event_end_date->format( "Y-m-d" ) ) && $this->isMoreThanOneDay( $event ) ) {
-				$time_label = "Multiday Event. Ends: " . $event_end_date->format( "jS M" );
-			}
-		} elseif ( $event->dtstart === $event->dtend ) {
-			$time_label = $event_start_date->format( "G:ia" );
-		} else {
-			$time_label = $event_start_date->format( "G:ia" ) . " - " . $event_end_date->format( "G:ia" );
-		}
-
-		return '<i class="fa fa-fw fa-clock-o"></i>' . $time_label;
-	}
-
-	private function isAllDayEvent( Event $event ) {
-
-		if ( $event->x_microsoft_cdo_alldayevent === "TRUE" ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private function isMoreThanOneday( Event $event ) {
-
-		$start_ts = $event->dtstart_array[ 2 ];
-		$end_ts   = $event->dtend_array[ 2 ];
-
-		if ( ( $end_ts - $start_ts ) > DAY_IN_SECONDS ) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
 
 	private function setEventMeta( Event $event ) {
 
@@ -191,7 +128,6 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 		}
 
 		return $meta;
-
 	}
 
 	private function mapLocationText( string $input ) {
