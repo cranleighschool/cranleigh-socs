@@ -17,6 +17,8 @@ class SportFixturesWidget extends \WP_Widget {
 
 	protected $id_name;
 	protected $default_name;
+	protected $sportURL;
+	protected $sportID;
 	/**
 	 * Constructor.
 	 *
@@ -133,9 +135,11 @@ class SportFixturesWidget extends \WP_Widget {
 			echo '</table>';
 			echo '</div>';
 
-			echo '<div style="padding:5px;">';
-			echo do_shortcode( '[signpost block="true" url="' . $this->sportURL . '" text="All ' . $sport . ' Fixtures"]' );
-			echo '</div>';
+			if (!empty($obj)) {
+				echo '<div style="padding:5px;">';
+				echo do_shortcode( '[signpost block="true" url="' . $this->sportURL . '" text="All ' . $sport . ' Fixtures"]' );
+				echo '</div>';
+			}
 
 		}
 
