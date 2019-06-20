@@ -8,31 +8,31 @@ class SettingsApi {
 	private $settings_api;
 
 	function __construct() {
-		$this->settings_api = new WeDevs_Settings_API;
+		$this->settings_api = new WeDevs_Settings_API();
 
-		add_action( 'admin_init', array($this, 'admin_init') );
-		add_action( 'admin_menu', array($this, 'admin_menu') );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 	}
 
 	function admin_init() {
 
-		//set the settings
+		// set the settings
 		$this->settings_api->set_sections( $this->get_settings_sections() );
 		$this->settings_api->set_fields( $this->get_settings_fields() );
 
-		//initialize settings
+		// initialize settings
 		$this->settings_api->admin_init();
 	}
 
 	function admin_menu() {
-		add_options_page( 'SOCS Sports', 'SOCS Sports', 'manage_options', 'cranleigh-socs-settings', array($this, 'plugin_page') );
+		add_options_page( 'SOCS Sports', 'SOCS Sports', 'manage_options', 'cranleigh-socs-settings', array( $this, 'plugin_page' ) );
 	}
 
 	function get_settings_sections() {
 		$sections = array(
 			array(
-				'id' => 'socs-sports',
-				'title' => __( 'SOCS Sports Settings', 'wedevs' )
+				'id'    => 'socs-sports',
+				'title' => __( 'SOCS Sports Settings', 'wedevs' ),
 			),
 
 		);
@@ -48,25 +48,25 @@ class SettingsApi {
 		$settings_fields = array(
 			'socs-sports' => array(
 				array(
-					'name'              => 'schoolID',
-					'label'             => __( 'School ID', 'wedevs' ),
-					'desc'              => __( 'Your School\'s SOCS ID.', 'wedevs' ),
-					'type'              => 'text',
-					'default'           => '',
+					'name'    => 'schoolID',
+					'label'   => __( 'School ID', 'wedevs' ),
+					'desc'    => __( 'Your School\'s SOCS ID.', 'wedevs' ),
+					'type'    => 'text',
+					'default' => '',
 				),
 				array(
-					'name'              => 'apiKey',
-					'label'             => __( 'API KEY', 'wedevs' ),
-					'desc'              => __( 'The API Key that SOCS would have given you....', 'wedevs' ),
-					'type'              => 'text',
-					'default'           => '',
+					'name'    => 'apiKey',
+					'label'   => __( 'API KEY', 'wedevs' ),
+					'desc'    => __( 'The API Key that SOCS would have given you....', 'wedevs' ),
+					'type'    => 'text',
+					'default' => '',
 				),
 				array(
-					'name'              => 'intoFuture',
-					'label'             => __( 'Into the Future', 'wedevs' ),
-					'desc'              => __( 'How many weeks into the future to you want the fixtures list to look to?', 'wedevs' ),
-					'type'              => 'number',
-					'default'           => '',
+					'name'    => 'intoFuture',
+					'label'   => __( 'Into the Future', 'wedevs' ),
+					'desc'    => __( 'How many weeks into the future to you want the fixtures list to look to?', 'wedevs' ),
+					'type'    => 'number',
+					'default' => '',
 				),
 			),
 		);
@@ -76,9 +76,9 @@ class SettingsApi {
 
 	private function get_plugin_list() {
 		$all_plugins = get_plugins();
-		$output = array();
-		foreach ($all_plugins as $plugin => $value):
-			$output[$plugin] = $value['Name'];
+		$output      = array();
+		foreach ( $all_plugins as $plugin => $value ) :
+			$output[ $plugin ] = $value['Name'];
 		endforeach;
 
 		return $output;
@@ -87,7 +87,7 @@ class SettingsApi {
 	function plugin_page() {
 		echo '<div class="wrap">';
 
-		if (count($this->get_settings_sections()) > 1):
+		if ( count( $this->get_settings_sections() ) > 1 ) :
 			$this->settings_api->show_navigation();
 		endif;
 
@@ -104,11 +104,11 @@ class SettingsApi {
 	 * @return array page names with key value pairs
 	 */
 	function get_pages() {
-		$pages = get_pages();
+		$pages         = get_pages();
 		$pages_options = array();
 		if ( $pages ) {
-			foreach ($pages as $page) {
-				$pages_options[$page->ID] = $page->post_title;
+			foreach ( $pages as $page ) {
+				$pages_options[ $page->ID ] = $page->post_title;
 			}
 		}
 

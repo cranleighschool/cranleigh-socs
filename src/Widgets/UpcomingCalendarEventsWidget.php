@@ -13,69 +13,73 @@ use ICal\Event;
 
 class UpcomingCalendarEventsWidget extends \WP_Widget {
 
-	protected $className = "Cranleigh (SOCS) Upcoming Events";
-	protected $classId = "cranleigh-socs-events-widget";
-	protected $description = "Creates a widget that pulls through calendar events from SOCS Calendar.";
+	protected $className   = 'Cranleigh (SOCS) Upcoming Events';
+	protected $classId     = 'cranleigh-socs-events-widget';
+	protected $description = 'Creates a widget that pulls through calendar events from SOCS Calendar.';
 	protected $rangeStart;
 	protected $rangeEnd;
 	protected $min_num_events_shown = 10;
-	protected $cssClasses = [
-		"events",
-		"no-pad"
+	protected $cssClasses           = [
+		'events',
+		'no-pad',
 	];
 
 	public function __construct() {
 
 		$widget_ops = [
 			'classname'   => $this->cssClassesToString(),
-			'description' => $this->description
+			'description' => $this->description,
 		];
 		parent::__construct( $this->classId, $this->className, $widget_ops );
 	}
 
 	private function cssClassesToString() {
 
-		return implode( " ", $this->cssClasses );
+		return implode( ' ', $this->cssClasses );
 	}
 
 	public function widget( $args, $instance ) {
 
-		$calendar = new CalendarEvents($instance['socs_uri'], [
-			'cacheName' => $args['widget_id'],
-			'minNumEvents' => 10
-		]);
+		$calendar = new CalendarEvents(
+			$instance['socs_uri'],
+			[
+				'cacheName'    => $args['widget_id'],
+				'minNumEvents' => 10,
+			]
+		);
 		$this->setMinNumEventsShown( $calendar->minNumEvents );
 
-		echo $args[ 'before_widget' ];
+		echo $args['before_widget'];
 
-		if ( ! empty( $instance[ 'title' ] ) ) {
-			echo $args[ 'before_title' ] . apply_filters( 'widget_title',
-					$instance[ 'title' ] ) . $args[ 'after_title' ];
+		if ( ! empty( $instance['title'] ) ) {
+			echo $args['before_title'] . apply_filters(
+				'widget_title',
+				$instance['title']
+			) . $args['after_title'];
 		}
 
-		if (is_wp_error($calendar)) {
+		if ( is_wp_error( $calendar ) ) {
 
-			echo '<div class="alert alert-danger"><p><strong>Error: </strong>'.$calendar->get_error_message().'</p></div>';
+			echo '<div class="alert alert-danger"><p><strong>Error: </strong>' . $calendar->get_error_message() . '</p></div>';
 
 		} else {
 			echo '<div class="table-responsive">';
 			echo '<table class="table table-striped table-condensed table-hover">';
 			$i = 0;
 
-			foreach ( $calendar->events as $key => $event ):
+			foreach ( $calendar->events as $key => $event ) :
 
 				$i++;
 				if ( $i > $this->min_num_events_shown ) {
 					$lastRecord = ( $key - 1 );
 					$lastEvent  = $calendar->events[ $lastRecord ];
-					if ( $this->iCalDateHelper( $event->dtstart )->format( "Y-m-d" ) !== $this->iCalDateHelper( $lastEvent->dtstart )->format( "Y-m-d" ) ) {
+					if ( $this->iCalDateHelper( $event->dtstart )->format( 'Y-m-d' ) !== $this->iCalDateHelper( $lastEvent->dtstart )->format( 'Y-m-d' ) ) {
 						break;
 					}
 				}
 
 				$event_start_date = $this->iCalDateHelper( $event->dtstart );
 				$event_end_date   = $this->iCalDateHelper( $event->dtend );
-				
 
 				$event_meta = $this->setEventMeta( $event );
 				?>
@@ -86,23 +90,22 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 						</div>
 					</td>
 					<td class="cal-event-detail">
-						<a target="socs_calendar" href="<?php echo $this->getSocsHttpUri( $instance[ 'socs_uri' ] ) ?>"><?php echo $event->summary; ?></a>
+						<a target="socs_calendar" href="<?php echo $this->getSocsHttpUri( $instance['socs_uri'] ); ?>"><?php echo $event->summary; ?></a>
 						<br />
 						<span class="cal-event-time"><?php echo $event->timeLabel; ?></span>
 						<span class="cal-meta"><?php echo $event_meta; ?></span>
 					</td>
 				</tr>
-			<?php
-
+				<?php
 
 			endforeach;
 
-			echo "</table>";
-			echo "</div>";
+			echo '</table>';
+			echo '</div>';
 
 		}
 
-		echo $args[ 'after_widget' ];
+		echo $args['after_widget'];
 	}
 
 	private function setMinNumEventsShown( int $number ) {
@@ -112,8 +115,8 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 
 	private function iCalDateHelper( string $iCalDate ) {
 
-		$iCalDate = str_replace( "T", "", $iCalDate );
-		$iCalDate = str_replace( "Z", "", $iCalDate );
+		$iCalDate = str_replace( 'T', '', $iCalDate );
+		$iCalDate = str_replace( 'Z', '', $iCalDate );
 
 		return new \DateTime( $iCalDate );
 	}
@@ -133,14 +136,14 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 	private function mapLocationText( string $input ) {
 
 		switch ( $input ) {
-			case "H":
-				$output = "Home";
+			case 'H':
+				$output = 'Home';
 				break;
-			case "A":
-				$output = "Away";
+			case 'A':
+				$output = 'Away';
 				break;
-			case "N":
-				$output = "Netural";
+			case 'N':
+				$output = 'Netural';
 				break;
 			default:
 				$output = $input;
@@ -154,24 +157,24 @@ class UpcomingCalendarEventsWidget extends \WP_Widget {
 
 		$uri = parse_url( $uri );
 
-		return $uri[ 'scheme' ] . "://" . $uri[ 'host' ];
+		return $uri['scheme'] . '://' . $uri['host'];
 	}
 
 	public function update( $new_instance, $old_instance ) {
 
-		$instance               = [];
-		$instance[ 'title' ]    = ( ! empty( $new_instance[ 'title' ] ) ) ? strip_tags( $new_instance[ 'title' ] ) : '';
-		$instance[ 'socs_uri' ] = ( ! empty( $new_instance[ 'socs_uri' ] ) ) ? strip_tags( $new_instance[ 'socs_uri' ] ) : '';
-		$instance[ 'minNumEvents' ]     = ( ! empty( $new_instance['minNumEvents'] ) ) ? strip_tags( $new_instance['minNumEvents'] ) : '';
+		$instance                 = [];
+		$instance['title']        = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['socs_uri']     = ( ! empty( $new_instance['socs_uri'] ) ) ? strip_tags( $new_instance['socs_uri'] ) : '';
+		$instance['minNumEvents'] = ( ! empty( $new_instance['minNumEvents'] ) ) ? strip_tags( $new_instance['minNumEvents'] ) : '';
 
 		return $instance;
 	}
 
 	public function form( $instance ) {
 
-		$title    = ! empty( $instance[ 'title' ] ) ? $instance[ 'title' ] : __( 'Upcoming Events', 'cranleigh-2016' );
-		$socs_uri = ! empty( $instance[ 'socs_uri' ] ) ? $instance[ 'socs_uri' ] : '';
-		$minNumEvents = ! empty( $instance[ 'minNumEvents' ]) ? $instance[ 'minNumEvents' ] : '5';
+		$title        = ! empty( $instance['title'] ) ? $instance['title'] : __( 'Upcoming Events', 'cranleigh-2016' );
+		$socs_uri     = ! empty( $instance['socs_uri'] ) ? $instance['socs_uri'] : '';
+		$minNumEvents = ! empty( $instance['minNumEvents'] ) ? $instance['minNumEvents'] : '5';
 
 		?>
 		<p>First, visit the front end of your SOCS Calendar, and click on &quot;Calendar Sync&quot;. Get the link of the ICS calendar and put that in the field below.</p>

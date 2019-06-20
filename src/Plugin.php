@@ -14,49 +14,49 @@ class Plugin {
 	 * @param string $version
 	 */
 	public function __construct() {
-		$this->version = get_plugin_data(dirname(__FILE__))['Version'];
+		$this->version  = get_plugin_data( dirname( __FILE__ ) )['Version'];
 		$this->settings = new Settings();
 
 		$this->api = new API();
 		$this->api->init();
 
-		if ($this->settings->schoolID===1) {
-			AdminNotice::create()->error("<strong>SOCS API PLUGIN:</strong> Looks like you haven't set your settings yet. Please <a href='options-general.php?page=cranleigh-socs-settings'>do that now...</a>")->show();
+		if ( $this->settings->schoolID === 1 ) {
+			AdminNotice::create()->error( "<strong>SOCS API PLUGIN:</strong> Looks like you haven't set your settings yet. Please <a href='options-general.php?page=cranleigh-socs-settings'>do that now...</a>" )->show();
 		}
-		add_shortcode( "socs-fixtures", array($this,"displayFixtures" ));
-		add_shortcode( "socs-results", array($this, "displayResults"));
-		add_action( 'wp_footer', array($this, 'wp_footer'));
-		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-		add_action( 'widgets_init', array($this, 'register_widgets'));
+		add_shortcode( 'socs-fixtures', array( $this, 'displayFixtures' ) );
+		add_shortcode( 'socs-results', array( $this, 'displayResults' ) );
+		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 	}
 	public function checkPage() {
-		if (get_the_ID() == get_page_by_path('information/sports-desk')->ID) {
+		if ( get_the_ID() == get_page_by_path( 'information/sports-desk' )->ID ) {
 			return true;
 		}
 
 		return false;
 	}
 	public function enqueue_styles() {
-		if ($this->checkPage()===true) {
-			wp_enqueue_style( 'datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" );
-			wp_enqueue_style( 'datatables', "//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css" );
+		if ( $this->checkPage() === true ) {
+			wp_enqueue_style( 'datatables', '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css' );
+			wp_enqueue_style( 'datatables', '//cdn.datatables.net/1.10.16/css/jquery.dataTables.bootstrap.min.css' );
 		}
 	}
 	public function register_widgets() {
-		register_widget(Widgets\SportFixturesWidget::class);
-		register_widget(Widgets\UpcomingCalendarEventsWidget::class);
+		register_widget( Widgets\SportFixturesWidget::class );
+		register_widget( Widgets\UpcomingCalendarEventsWidget::class );
 	}
 
 	/**
 	 *
 	 */
 	public function wp_footer() {
-		if ($this->checkPage() === false) {
+		if ( $this->checkPage() === false ) {
 			return false;
 		}
 		?>
 
-<script src="<?php echo plugins_url( 'jquery.simpleTicker/jquery.simpleTicker.js' , __FILE__ )?>"></script>
+<script src="<?php echo plugins_url( 'jquery.simpleTicker/jquery.simpleTicker.js', __FILE__ ); ?>"></script>
 <script>
 jQuery(function($){
   $.simpleTicker($("#ticker-fade"),{'effectType':'fade'});
@@ -81,27 +81,26 @@ jQuery(function($){
 
 });
 </script>
-<?php	}
+		<?php
+	}
 
 
 	/**
 	 * @return string
 	 */
 	public function displayResults() {
-		wp_enqueue_script('socs-js', plugins_url('socs.js', __FILE__), 'jquery');
+		wp_enqueue_script( 'socs-js', plugins_url( 'socs.js', __FILE__ ), 'jquery' );
 
-		$results = new SOCSResults($this->settings->schoolID, $this->settings->apiKey);
-		$output = "<div class=\"ticker-container\">";
+		$results = new SOCSResults( $this->settings->schoolID, $this->settings->apiKey );
+		$output  = '<div class="ticker-container">';
 		$output .= $results->title();
-		$output .= "<div class=\"ticker\" id=\"ticker-slide\">";
-		$output .= "<ul>";
-		foreach ($results->tickerTape() as $result):
-			$output .= "<li>".$result."</li>";
+		$output .= '<div class="ticker" id="ticker-slide">';
+		$output .= '<ul>';
+		foreach ( $results->tickerTape() as $result ) :
+			$output .= '<li>' . $result . '</li>';
 		endforeach;
-		$output .= "</ul>";
-		$output .= "</div></div>";
-
-
+		$output .= '</ul>';
+		$output .= '</div></div>';
 
 		return $output;
 	}
@@ -109,7 +108,7 @@ jQuery(function($){
 
 
 	public function getTeams() {
-		return new SOCSTeams($this->settings->schoolID, $this->settings->apiKey);
+		return new SOCSTeams( $this->settings->schoolID, $this->settings->apiKey );
 	}
 
 	/**
@@ -117,7 +116,7 @@ jQuery(function($){
 	 *
 	 * @return mixed
 	 */
-	public function get_setting($setting) {
+	public function get_setting( $setting ) {
 		return $this->settings->$setting;
 	}
 
@@ -127,22 +126,22 @@ jQuery(function($){
 	 *
 	 * @return array $obj->get()
 	 */
-	public function getFixtures(int $startDate=null, int $endDate=null) {
+	public function getFixtures( int $startDate = null, int $endDate = null ) {
 
-		if ($startDate===null) {
+		if ( $startDate === null ) {
 			$startDate = time();
 		}
 
-		if ($endDate===null) {
-			$endDate = $startDate + ($this->settings->intoFuture * WEEK_IN_SECONDS);
+		if ( $endDate === null ) {
+			$endDate = $startDate + ( $this->settings->intoFuture * WEEK_IN_SECONDS );
 		}
 
 		$obj = SOCS_Wrapper::getInstance();
-		$obj->setID($this->settings->schoolID);
-		$obj->setKey($this->settings->apiKey);
-		$obj->setData('fixtures');
-		$obj->setStartdate($startDate);
-		$obj->setEndDate($endDate);
+		$obj->setID( $this->settings->schoolID );
+		$obj->setKey( $this->settings->apiKey );
+		$obj->setData( 'fixtures' );
+		$obj->setStartdate( $startDate );
+		$obj->setEndDate( $endDate );
 
 		return $obj->get();
 
@@ -153,29 +152,30 @@ jQuery(function($){
 	 *
 	 * @return string
 	 */
-	private function mapSportIcon(string $sport) {
-		$sport_lr = strtolower($sport);
-		$icons = [
-			"badminton" => 4,
-			"cricket" => 9,
-			"equestrian" => 11,
-			"rugby union" => 24,
-			"water polo" => 74,
-			"tennis" => 31,
-			"swimming" => 29,
-			"squash" => 28,
-			"netball" => 18,
-			"hockey" => 15,
-			"golf" => 13,
-			"football" => 26,
-			"hockey indoor" => 15,
-			"hockey sevens" => 15
+	private function mapSportIcon( string $sport ) {
+		$sport_lr = strtolower( $sport );
+		$icons    = [
+			'badminton'     => 4,
+			'cricket'       => 9,
+			'equestrian'    => 11,
+			'rugby union'   => 24,
+			'water polo'    => 74,
+			'tennis'        => 31,
+			'swimming'      => 29,
+			'squash'        => 28,
+			'netball'       => 18,
+			'hockey'        => 15,
+			'golf'          => 13,
+			'football'      => 26,
+			'hockey indoor' => 15,
+			'hockey sevens' => 15,
 
 		];
-		if (array_key_exists($sport_lr, $icons))
-			return '<img src="https://www.schoolssports.com/images/sporticons/'.$icons[$sport_lr].'.gif" />';
-		else
+		if ( array_key_exists( $sport_lr, $icons ) ) {
+			return '<img src="https://www.schoolssports.com/images/sporticons/' . $icons[ $sport_lr ] . '.gif" />';
+		} else {
 			return $sport;
+		}
 	}
 
 	/**
@@ -183,28 +183,28 @@ jQuery(function($){
 	 *
 	 * @return false|string
 	 */
-	public function anglofyDate(string $date) {
-		$dateParts = explode("/", $date);
+	public function anglofyDate( string $date ) {
+		$dateParts = explode( '/', $date );
 
-		$day = $dateParts[0];
+		$day   = $dateParts[0];
 		$month = $dateParts[1];
-		$year = $dateParts[2];
+		$year  = $dateParts[2];
 
-		return date("jS M", strtotime($year."-".$month."-".$day));
+		return date( 'jS M', strtotime( $year . '-' . $month . '-' . $day ) );
 
 	}
 
-	private function showTeamsheet($eventid) {
-		return '<a href="javascript:void(0)" class="teamsheet-link" data-foo="'.$eventid.'">Link</a>';
-		$arrContextOptions=array(
-			"ssl"=>array(
-				"verify_peer"=>false,
-				"verify_peer_name"=>false,
+	private function showTeamsheet( $eventid ) {
+		return '<a href="javascript:void(0)" class="teamsheet-link" data-foo="' . $eventid . '">Link</a>';
+		$arrContextOptions = array(
+			'ssl' => array(
+				'verify_peer'      => false,
+				'verify_peer_name' => false,
 			),
 		);
 
-		$json = file_get_contents("https://socs.cranleigh.org/fixture/".$eventid, false, stream_context_create($arrContextOptions));
-		$fixture = json_decode($json);
+		$json    = file_get_contents( 'https://socs.cranleigh.org/fixture/' . $eventid, false, stream_context_create( $arrContextOptions ) );
+		$fixture = json_decode( $json );
 
 		return $fixture->sport;
 	}
@@ -252,44 +252,46 @@ jQuery(function($){
 			<tbody>
 				<?php
 
-
-					if ($fixtures->result):
+				if ( $fixtures->result ) :
 					$teams = $this->getTeams();
-					foreach($fixtures->result as $fixture):
-						if (!socs_is_normal_sport_fixture($fixture))
+					foreach ( $fixtures->result as $fixture ) :
+						if ( ! socs_is_normal_sport_fixture( $fixture ) ) {
 							continue;
-				?>
+						}
+						?>
 
-				<tr class="<?php echo strtolower((string) $fixture->result); ?>">
-					<td><span data-toggle="tooltip" title="<?php echo $fixture->sport; ?>"><?php echo $this->mapSportIcon($fixture->sport); ?></span></td>
-					<td><?php echo $this->anglofyDate($fixture->date); ?><br /><small>(<?php echo $fixture->time;?>)</small></td>
-					<td><a href="<?php echo $fixture->url; ?>" target="_blank"><?php echo $teams->getTeam($fixture->teamid)->teamname; ?></a></td>
+				<tr class="<?php echo strtolower( (string) $fixture->result ); ?>">
+					<td><span data-toggle="tooltip" title="<?php echo $fixture->sport; ?>"><?php echo $this->mapSportIcon( $fixture->sport ); ?></span></td>
+					<td><?php echo $this->anglofyDate( $fixture->date ); ?><br /><small>(<?php echo $fixture->time; ?>)</small></td>
+					<td><a href="<?php echo $fixture->url; ?>" target="_blank"><?php echo $teams->getTeam( $fixture->teamid )->teamname; ?></a></td>
 					<td>
-						<?php if ((string) $fixture->latlng): ?>
+						<?php if ( (string) $fixture->latlng ) : ?>
 						<a href="https://www.google.co.uk/maps/place/<?php echo $fixture->latlng; ?>" data-src="https://www.google.co.uk/maps/place/<?php echo $fixture->latlng; ?>" target="_blank">
 						<?php endif; ?>
-							<?php echo $fixture->location;
+							<?php
+							echo $fixture->location;
 
-							if ((string) $fixture->locationdetails && $fixture->locationdetails != "Main School"):
-								echo "<br /><small>(".$fixture->locationdetails.")</small>";
+							if ( (string) $fixture->locationdetails && $fixture->locationdetails != 'Main School' ) :
+								echo '<br /><small>(' . $fixture->locationdetails . ')</small>';
 							endif;
 
-						if ((string) $fixture->latlng): ?>
+							if ( (string) $fixture->latlng ) :
+								?>
 						</a>
-						<?php endif; ?>
+							<?php endif; ?>
 					</td>
 					<td><?php echo $fixture->opposition; ?></td>
 					<td><?php echo $fixture->matchtype; ?></td>
-					<td style="display: none;"><?php echo $this->showTeamsheet($fixture->eventid); ?></td>
+					<td style="display: none;"><?php echo $this->showTeamsheet( $fixture->eventid ); ?></td>
 				</tr>
 				<?php endforeach; ?>
 
-				<?php else: ?>
+				<?php else : ?>
 
 				<tr>
 					<td colspan="5" class="text-center">
 						<div class="well well-sm">
-							<span class="text-warning">No fixtures could be found between <?php echo $fixtures->startDate;?> and <?php echo $fixtures->endDate; ?></span>
+							<span class="text-warning">No fixtures could be found between <?php echo $fixtures->startDate; ?> and <?php echo $fixtures->endDate; ?></span>
 						</div>
 					</td>
 				</tr>
