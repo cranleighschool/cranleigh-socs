@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "fredbradley/socs-calendar-ics-parser",
-            "version": "1.0.0",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fredbradley/socs-ics-calendar-parser.git",
-                "reference": "63cecfef885556fdf815d3d4f81637268968859f"
+                "url": "https://github.com/fredbradley/socs-calendar-ics-parser.git",
+                "reference": "5fab3847067a27c15641a440042c0fb6074827f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fredbradley/socs-ics-calendar-parser/zipball/63cecfef885556fdf815d3d4f81637268968859f",
-                "reference": "63cecfef885556fdf815d3d4f81637268968859f",
+                "url": "https://api.github.com/repos/fredbradley/socs-calendar-ics-parser/zipball/5fab3847067a27c15641a440042c0fb6074827f1",
+                "reference": "5fab3847067a27c15641a440042c0fb6074827f1",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "AGPL-3.0-or-later"
             ],
             "authors": [
                 {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "A PHP Script that parses an ICS file from SOCS, in a readable format to dispaly elsewhere.",
-            "time": "2018-07-20T10:08:27+00:00"
+            "time": "2019-06-14T12:50:05+00:00"
         },
         {
             "name": "johngrogg/ics-parser",
