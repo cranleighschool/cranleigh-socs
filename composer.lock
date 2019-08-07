@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "fredbradley/socs-calendar-ics-parser",
-            "version": "1.0.11",
+            "version": "1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fredbradley/socs-calendar-ics-parser.git",
-                "reference": "5fab3847067a27c15641a440042c0fb6074827f1"
+                "reference": "01dc5ffbbfa26ab0372435bac9387dcdbe48ad0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fredbradley/socs-calendar-ics-parser/zipball/5fab3847067a27c15641a440042c0fb6074827f1",
-                "reference": "5fab3847067a27c15641a440042c0fb6074827f1",
+                "url": "https://api.github.com/repos/fredbradley/socs-calendar-ics-parser/zipball/01dc5ffbbfa26ab0372435bac9387dcdbe48ad0b",
+                "reference": "01dc5ffbbfa26ab0372435bac9387dcdbe48ad0b",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "A PHP Script that parses an ICS file from SOCS, in a readable format to dispaly elsewhere.",
-            "time": "2019-06-14T12:50:05+00:00"
+            "time": "2019-08-07T08:28:09+00:00"
         },
         {
             "name": "johngrogg/ics-parser",
