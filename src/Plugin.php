@@ -30,8 +30,10 @@ class Plugin {
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 	}
 	public function checkPage() {
-		if ( get_the_ID() == get_page_by_path( 'information/sports-desk' )->ID ) {
-			return true;
+		if (get_page_by_path('information/sports-desk') instanceof \WP_Post) {
+			if (get_the_ID() == get_page_by_path('information/sports-desk')->ID) {
+				return true;
+			}
 		}
 
 		return false;
