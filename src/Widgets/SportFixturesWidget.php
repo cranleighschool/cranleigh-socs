@@ -141,9 +141,7 @@ class SportFixturesWidget extends \WP_Widget {
 		echo $args['after_widget'];
 	}
 	private function getSportID( $url ) {
-		error_log( 'Getting SID from URL: ' . $url );
 		$parts = explode( 'SID=', $url ); // Sometimes the "SID=" is not found!
-		error_log( print_r( $parts, true ) );
 		$this->sportID  = $parts[1]; // when SID is not found in the URL then this breaks!
 		$this->sportURL = 'http://sportsdesk.cranleigh.org/Fixtures_Teams.asp?SID=' . $this->sportID;
 	}
