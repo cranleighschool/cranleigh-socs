@@ -4,18 +4,21 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
+class ComposerStaticInit1de0f13ed3a1cbddb12ee3cb820cca04
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '1f37a5ef85747fbad7d9cdafefb4209b' => __DIR__ . '/..' . '/yahnis-elsts/admin-notices/AdminNotice.php',
-        '89ff252b349d4d088742a09c25f5dd74' => __DIR__ . '/..' . '/yahnis-elsts/plugin-update-checker/plugin-update-checker.php',
+        '241d2b5b9c1e680c0770b006b0271156' => __DIR__ . '/..' . '/yahnis-elsts/plugin-update-checker/load-v4p9.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Component\\Translation\\' => 30,
         ),
         'F' => 
@@ -23,12 +26,24 @@ class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
             'FredBradley\\SOCS\\' => 17,
             'FredBradley\\SOCSICSParser\\' => 26,
         ),
+        'C' => 
+        array (
+            'Carbon\\' => 7,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Contracts\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
         'Symfony\\Component\\Translation\\' => 
         array (
@@ -42,10 +57,10 @@ class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
         array (
             0 => __DIR__ . '/..' . '/fredbradley/socs-calendar-ics-parser/src',
         ),
-    );
-
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
+        'Carbon\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -59,17 +74,18 @@ class ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c
     );
 
     public static $classMap = array (
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'WeDevs_Settings_API' => __DIR__ . '/..' . '/tareq1988/wordpress-settings-api-class/src/class.settings-api.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitbcb3d4263fdacd7e94d6f0ea7b783a9c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1de0f13ed3a1cbddb12ee3cb820cca04::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1de0f13ed3a1cbddb12ee3cb820cca04::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1de0f13ed3a1cbddb12ee3cb820cca04::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit1de0f13ed3a1cbddb12ee3cb820cca04::$classMap;
 
         }, null, ClassLoader::class);
     }
