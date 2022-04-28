@@ -14,7 +14,7 @@ class Plugin {
 	 * @param string $version
 	 */
 	public function __construct() {
-		$this->version  = get_plugin_data( dirname( __FILE__ ) )['Version'];
+		$this->version  = get_plugin_data( __FILE__ )['Version'];
 		$this->settings = new Settings();
 
 		$this->api = new API();
